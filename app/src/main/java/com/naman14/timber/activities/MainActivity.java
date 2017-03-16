@@ -357,7 +357,7 @@ public class MainActivity extends BaseActivity implements ATEActivityThemeCustom
 
                 break;
             case R.id.nav_donate:
-                startActivity(new Intent(MainActivity.this, DonateActivity.class));
+//                startActivity(new Intent(MainActivity.this, DonateActivity.class));
                 break;
         }
 

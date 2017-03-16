@@ -61,19 +61,19 @@ public class DonateActivity extends BaseThemedActivity implements BillingProcess
         progressBar = (ProgressBar) findViewById(R.id.progressBar);
         status = (TextView) findViewById(R.id.donation_status);
 
-        if (action != null && action.equals("restore")) {
+        if(action != null && action.equals("restore")) {
             status.setText("Restoring purchases..");
         }
 
-        bp = new BillingProcessor(this, getString(R.string.play_billing_license_key), this);
-
+//        bp = new BillingProcessor(this, getString(R.string.play_billing_license_key), this);
+        bp = new BillingProcessor(this, "", this);
     }
 
     @Override
     public void onBillingInitialized() {
         readyToPurchase = true;
         checkStatus();
-        if (!(action != null && action.equals("restore")))
+        if(!(action != null && action.equals("restore")))
             getProducts();
     }
 
@@ -106,14 +106,14 @@ public class DonateActivity extends BaseThemedActivity implements BillingProcess
 
     @Override
     public void onDestroy() {
-        if (bp != null)
+        if(bp != null)
             bp.release();
         super.onDestroy();
     }
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent data) {
-        if (!bp.handleActivityResult(requestCode, resultCode, data))
+        if(!bp.handleActivityResult(requestCode, resultCode, data))
             super.onActivityResult(requestCode, resultCode, data);
     }
 
@@ -128,17 +128,17 @@ public class DonateActivity extends BaseThemedActivity implements BillingProcess
             @Override
             protected void onPostExecute(Boolean b) {
                 super.onPostExecute(b);
-                if (b) {
+                if(b) {
                     PreferencesUtility.getInstance(DonateActivity.this).setFullUnlocked(true);
                     status.setText("Thanks for your support!");
-                    if (action!=null && action.equals("restore")) {
+                    if(action != null && action.equals("restore")) {
                         status.setText("Your purchases has been restored. Thanks for your support");
                         progressBar.setVisibility(View.GONE);
                     }
-                    if (getSupportActionBar() != null)
+                    if(getSupportActionBar() != null)
                         getSupportActionBar().setTitle("Support development");
                 } else {
-                    if (action!=null && action.equals("restore")) {
+                    if(action != null && action.equals("restore")) {
                         status.setText("No previous purchase found");
                         getProducts();
                     }
@@ -169,20 +169,20 @@ public class DonateActivity extends BaseThemedActivity implements BillingProcess
             protected void onPostExecute(List<SkuDetails> productList) {
                 super.onPostExecute(productList);
 
-                if (productList == null)
+                if(productList == null)
                     return;
 
                 Collections.sort(productList, new Comparator<SkuDetails>() {
                     @Override
                     public int compare(SkuDetails skuDetails, SkuDetails t1) {
-                        if (skuDetails.priceValue >= t1.priceValue)
+                        if(skuDetails.priceValue >= t1.priceValue)
                             return 1;
-                        else if (skuDetails.priceValue <= t1.priceValue)
+                        else if(skuDetails.priceValue <= t1.priceValue)
                             return -1;
                         else return 0;
                     }
                 });
-                for (int i = 0; i < productList.size(); i++) {
+                for(int i = 0; i < productList.size(); i++) {
                     final SkuDetails product = productList.get(i);
                     View rootView = LayoutInflater.from(DonateActivity.this).inflate(R.layout.item_donate_product, productListView, false);
 
@@ -192,7 +192,7 @@ public class DonateActivity extends BaseThemedActivity implements BillingProcess
                     rootView.findViewById(R.id.btn_donate).setOnClickListener(new View.OnClickListener() {
                         @Override
                         public void onClick(View view) {
-                            if (readyToPurchase)
+                            if(readyToPurchase)
                                 bp.purchase(DonateActivity.this, product.productId);
                             else
                                 Toast.makeText(DonateActivity.this, "Unable to initiate purchase", Toast.LENGTH_SHORT).show();
@@ -209,7 +209,7 @@ public class DonateActivity extends BaseThemedActivity implements BillingProcess
 
     @Override
     public boolean onOptionsItemSelected(final MenuItem item) {
-        switch (item.getItemId()) {
+        switch(item.getItemId()) {
             case android.R.id.home:
                 super.onBackPressed();
                 return true;

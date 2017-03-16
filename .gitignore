@@ -12,3 +12,7 @@ app/manifest-merger-release-report.txt
 
 secret.xml
 google-services.json
+
+
+# fabric api key
+api_key.xml
