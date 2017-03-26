@@ -19,30 +19,51 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageInfo;
 import android.content.pm.PackageManager;
+import android.database.Cursor;
 import android.graphics.Paint;
 import android.net.Uri;
 import android.os.Bundle;
+import android.os.Environment;
 import android.preference.PreferenceManager;
+import android.provider.MediaStore;
 import android.support.v4.app.DialogFragment;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
 
+import com.mpatric.mp3agic.ID3v1;
+import com.mpatric.mp3agic.ID3v2;
+import com.mpatric.mp3agic.Mp3File;
 import com.naman14.timber.R;
+import com.naman14.timber.models.Song;
+import com.squareup.okhttp.internal.io.FileSystem;
+
+import java.io.File;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.PrintWriter;
+import java.io.UnsupportedEncodingException;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.regex.Pattern;
+import java.util.regex.PatternSyntaxException;
 
 public class Helpers {
+    static String tag = "encode";
 
     public static void showAbout(AppCompatActivity activity) {
         FragmentManager fm = activity.getSupportFragmentManager();
         FragmentTransaction ft = fm.beginTransaction();
         Fragment prev = fm.findFragmentByTag("dialog_about");
-        if (prev != null) {
+        if(prev != null) {
             ft.remove(prev);
         }
         ft.addToBackStack(null);
@@ -140,7 +161,7 @@ public class Helpers {
                 String version = pInfo.versionName;
                 int versionCode = pInfo.versionCode;
                 appversion.setText("Timber " + version);
-            } catch (PackageManager.NameNotFoundException e) {
+            } catch(PackageManager.NameNotFoundException e) {
                 e.printStackTrace();
             }
 
@@ -149,6 +170,121 @@ public class Helpers {
                     .create();
         }
 
+    }
+
+    public static void showCursorInfo(Cursor c) {
+        PrintWriter pw = null;
+        try {
+            pw = new PrintWriter(new FileOutputStream(
+                    Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/cursor.txt"));
+        } catch(FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        if(pw == null) return;
+
+        try {
+            if(c != null && c.moveToFirst()) {
+                pw.append(String.format("-------------%1$tY-%1$tm-%1$td %1$tH:%1$tM:%1$tS-------------", Calendar.getInstance()));
+                pw.append("\r\n");
+                do {
+
+                    for(int i = 0; i < c.getColumnCount(); i++) {
+                        if(c.getColumnName(i).equals("title")) {
+                            pw.append(new String(c.getString(i).getBytes("shift_jis"), "utf-8"));//shift_jis
+                            pw.append("\r\n");
+                        }
+                        pw.append(c.getString(i));
+                        pw.append("\r\n");
+                    }
+                    pw.append("******************************************************");
+                    pw.append("\r\n");
+                } while(c.moveToNext());
+                pw.append("-------------end--------------");
+                pw.append("\r\n");
+            }
+        } catch(Exception e) {//UnsupportedEncoding
+            e.printStackTrace();
+        } finally {
+            pw.flush();
+            pw.close();
+        }
+    }
+
+    public static void showSongList(ArrayList<Song> songs) {
+        PrintWriter pw = null;
+        try {
+            pw = new PrintWriter(new FileOutputStream(
+                    Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/songs.txt"));
+        } catch(FileNotFoundException e) {
+            e.printStackTrace();
+        }
+
+        if(pw == null) return;
+
+        try {
+            pw.append(String.format("-------------%1$tY-%1$tm-%1$td %1$tH:%1$tM:%1$tS-------------", Calendar.getInstance()));
+            pw.append("\r\n");
+            for(Song s : songs) {
+                pw.append(s.title + " | " + new File(s.path).getName());
+                pw.append("\r\n");
+
+                //
+
+                Mp3File mp3file = new Mp3File(s.path);
+                Log.e(tag, s.path);
+                if(mp3file.hasId3v1Tag()) {
+                    ID3v1 id3v1 = mp3file.getId3v1Tag();
+                    Log.e(tag, Thread.currentThread().getId() + "---idv3---" + id3v1.getTitle());
+                }
+                if(mp3file.hasId3v2Tag()) {
+                    ID3v2 id3v2 = mp3file.getId3v2Tag();
+                    Log.e(tag, Thread.currentThread().getId() + "---idv3---" + id3v2.getTitle());
+                }
+                //
+            }
+            pw.append("-------------end--------------");
+            pw.append("\r\n");
+        } catch(Exception e) {//UnsupportedEncoding
+            e.printStackTrace();
+        } finally {
+            pw.flush();
+            pw.close();
+        }
+    }
+
+    /**
+     * if string is messycode return true
+     *
+     * @param str
+     * @return if string is messycode return true
+     */
+    public static boolean isMessyCode(String str) {
+        Log.e(tag, Thread.currentThread().getId() + "--" + str);
+        try {
+            String pattern = String.format("[^\u4e00-\u9fd5\u0000-\u017f\u3040-\u30fF]{%d,}", str.length() / 2);
+            Pattern p = Pattern.compile(pattern);
+            return p.matcher(str).matches();
+        } catch(PatternSyntaxException e) {
+            e.printStackTrace();
+        }
+        return false;
+    }
+
+    public static String convertMessyCode(String str) {
+        String[] codes = {"shift_jis", "big5", "gbk"};
+        Log.e(tag, Thread.currentThread().getId() + "--" + str);
+        for(String code : codes) {
+            try {
+                String encodeResult = new String(str.getBytes(code), "utf-8");
+                Log.e(tag, Thread.currentThread().getId() + "--" + encodeResult);
+                if(!isMessyCode(encodeResult)) return encodeResult;
+            } catch(Exception e) {
+                e.printStackTrace();
+                continue;
+            }
+        }
+        return str;
     }
 
 }

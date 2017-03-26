@@ -14,8 +14,12 @@
 
 package com.naman14.timber.fragments;
 
+import android.content.Intent;
+import android.media.MediaScannerConnection;
+import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
+import android.os.Environment;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
@@ -33,11 +37,13 @@ import com.naman14.timber.adapters.SongsListAdapter;
 import com.naman14.timber.dataloaders.SongLoader;
 import com.naman14.timber.listeners.MusicStateListener;
 import com.naman14.timber.models.Song;
+import com.naman14.timber.utils.Helpers;
 import com.naman14.timber.utils.PreferencesUtility;
 import com.naman14.timber.utils.SortOrder;
 import com.naman14.timber.widgets.DividerItemDecoration;
 import com.naman14.timber.widgets.FastScroller;
 
+import java.io.File;
 import java.util.List;
 
 public class SongsFragment extends Fragment implements MusicStateListener {
@@ -101,6 +107,16 @@ public class SongsFragment extends Fragment implements MusicStateListener {
     public void onActivityCreated(final Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
         setHasOptionsMenu(true);
+        //test
+        Helpers.showCursorInfo(SongLoader.makeSongCursor(getActivity(), null, null));
+        Helpers.showSongList(SongLoader.getAllSongs(getActivity()));
+        ((BaseActivity) getActivity()).sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
+                Uri.fromFile(new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/cursor.txt"))
+        ));
+        ((BaseActivity) getActivity()).sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
+                Uri.fromFile(new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/songs.txt"))
+        ));
+        //test
     }
 
     @Override

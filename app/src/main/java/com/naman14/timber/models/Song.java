@@ -14,6 +14,8 @@
 
 package com.naman14.timber.models;
 
+import com.naman14.timber.utils.Helpers;
+
 public class Song {
 
     public final long albumId;
@@ -24,6 +26,7 @@ public class Song {
     public final long id;
     public final String title;
     public final int trackNumber;
+    public String path;
 
     public Song() {
         this.id = -1;
@@ -45,5 +48,11 @@ public class Song {
         this.albumName = _albumName;
         this.duration = _duration;
         this.trackNumber = _trackNumber;
+    }
+
+    public void tryConvertMessyCode() {
+        if(Helpers.isMessyCode(this.albumName)) {
+//            this.albumName = Helpers.convertMessyCode(this.albumName);
+        }
     }
 }

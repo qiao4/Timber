@@ -76,13 +76,13 @@ public class MainActivity extends BaseActivity implements ATEActivityThemeCustom
 
         }
     };
-    Runnable navigateNowplaying = new Runnable() {
+    Runnable navigateNowPlaying = new Runnable() {
         public void run() {
             navigateLibrary.run();
             startActivity(new Intent(MainActivity.this, NowPlayingActivity.class));
         }
     };
-    final PermissionCallback permissionReadstorageCallback = new PermissionCallback() {
+    final PermissionCallback permissionReadStorageCallback = new PermissionCallback() {
         @Override
         public void permissionGranted() {
             loadEverything();
@@ -162,7 +162,7 @@ public class MainActivity extends BaseActivity implements ATEActivityThemeCustom
         navigationMap.put(Constants.NAVIGATE_LIBRARY, navigateLibrary);
         navigationMap.put(Constants.NAVIGATE_PLAYLIST, navigatePlaylist);
         navigationMap.put(Constants.NAVIGATE_QUEUE, navigateQueue);
-        navigationMap.put(Constants.NAVIGATE_NOWPLAYING, navigateNowplaying);
+        navigationMap.put(Constants.NAVIGATE_NOWPLAYING, navigateNowPlaying);
         navigationMap.put(Constants.NAVIGATE_ALBUM, navigateAlbum);
         navigationMap.put(Constants.NAVIGATE_ARTIST, navigateArtist);
 
@@ -203,7 +203,7 @@ public class MainActivity extends BaseActivity implements ATEActivityThemeCustom
                     MusicPlayer.clearQueue();
                     MusicPlayer.openFile(getIntent().getData().getPath());
                     MusicPlayer.playOrPause();
-                    navigateNowplaying.run();
+                    navigateNowPlaying.run();
                 }
             }, 350);
         }
@@ -232,11 +232,11 @@ public class MainActivity extends BaseActivity implements ATEActivityThemeCustom
                         .setAction("OK", new View.OnClickListener() {
                             @Override
                             public void onClick(View view) {
-                                Nammu.askForPermission(MainActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE, permissionReadstorageCallback);
+                                Nammu.askForPermission(MainActivity.this, Manifest.permission.READ_EXTERNAL_STORAGE, permissionReadStorageCallback);
                             }
                         }).show();
             } else {
-                Nammu.askForPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE, permissionReadstorageCallback);
+                Nammu.askForPermission(this, Manifest.permission.READ_EXTERNAL_STORAGE, permissionReadStorageCallback);
             }
         }
     }
