@@ -38,30 +38,49 @@ public class SongLoader {
 
     private static final long[] sEmptyList = new long[0];
 
+    private static ArrayList<Song> allSongs = null;
+
     public static ArrayList<Song> getSongsByID3ForCursor(Cursor cursor) {
         ArrayList arrayList = new ArrayList();
-        if((cursor != null) && (cursor.moveToFirst()))
+        if((cursor != null) && (cursor.moveToFirst())) {
+            Mp3File mp3file = null;
+            ID3v1 id3v1 = null;
+            Song s = null;
             do {
-                Mp3File mp3file = null;
-                ID3v1 id3v1 = null;
+                mp3file = null;
+                id3v1 = null;
+                s = null;
+                Log.d(Helpers.tag, "getSongsByID3ForCursor: " + new File(cursor.getString(8)).getName());
                 try {
                     mp3file = new Mp3File(cursor.getString(8));
+                    Log.d(Helpers.tag, "getSongsByID3ForCursor: ---------success");
+                } catch(Exception e) {
+                    e.printStackTrace();
+                    Log.d(Helpers.tag, "getSongsByID3ForCursor: ---------fail");
+                }
+                if(mp3file != null) {
                     if(mp3file.hasId3v2Tag()) {
                         id3v1 = mp3file.getId3v2Tag();
                     } else if(mp3file.hasId3v1Tag()) {
                         id3v1 = mp3file.getId3v1Tag();
                     }
-                } catch(Exception e) {
-                    e.printStackTrace();
                 }
 
-                if(id3v1 == null) return arrayList;
-                Song s = new Song(cursor.getLong(0), cursor.getLong(7), cursor.getInt(6), id3v1.getTitle(), id3v1.getArtist()
-                , id3v1.getAlbum(), cursor.getInt(4), cursor.getInt(5));
+                Log.d(Helpers.tag, "getSongsByID3ForCursor: end");
+                if(id3v1 != null && id3v1.getTitle() != null && id3v1.getTitle().trim().length() > 0) {
+                    s = new Song(cursor.getLong(0), cursor.getLong(7), cursor.getInt(6), id3v1.getTitle(), id3v1.getArtist()
+                            , id3v1.getAlbum(), cursor.getInt(4), cursor.getInt(5));
+
+                } else {
+                    s = new Song(cursor.getLong(0), cursor.getLong(7), cursor.getInt(6), cursor.getString(1), cursor.getString(2)
+                            , cursor.getString(3), cursor.getInt(4), cursor.getInt(5));
+                }
+                s.path = cursor.getString(8);
 
                 arrayList.add(s);
             }
             while(cursor.moveToNext());
+        }
         if(cursor != null)
             cursor.close();
         return arrayList;
@@ -75,9 +94,8 @@ public class SongLoader {
                 String title = Helpers.isMessyCode(cursor.getString(1)) ? Helpers.convertMessyCode(cursor.getString(1)) : cursor.getString(1);
                 //cursor.getString(1);
                 String artist = Helpers.isMessyCode(cursor.getString(2)) ? Helpers.convertMessyCode(cursor.getString(1)) : cursor.getString(2);
-                        //cursor.getString(2);
-                if(title.equals("02 諢帙�縺翫⊂縺医※縺�∪縺吶°"))
-                {
+                //cursor.getString(2);
+                if(title.equals("02 諢帙�縺翫⊂縺医※縺�∪縺吶°")) {
 //                    title = new File(cursor.getString(8)).getName();
                     title = Helpers.convertMessyCode(cursor.getString(1));
                     artist = Helpers.convertMessyCode(cursor.getString(2));
@@ -159,7 +177,10 @@ public class SongLoader {
     }
 
     public static ArrayList<Song> getAllSongs(Context context) {
-        return getSongsByID3ForCursor(makeSongCursor(context, null, null));
+        if(allSongs == null) {
+            allSongs = getSongsByID3ForCursor(makeSongCursor(context, null, null));
+        }
+        return allSongs;
     }
 
     public static long[] getSongListInFolder(Context context, String path) {
@@ -195,7 +216,7 @@ public class SongLoader {
         return context.getContentResolver().query(
                 MediaStore.Audio.Media.EXTERNAL_CONTENT_URI
                 , new String[]{"_id", "title", "artist", "album", "duration", "track", "artist_id", "album_id"
-                , MediaStore.Audio.Media.DATA}
+                        , MediaStore.Audio.Media.DATA}
                 , selectionStatement, paramArrayOfString, sortOrder);
     }
 

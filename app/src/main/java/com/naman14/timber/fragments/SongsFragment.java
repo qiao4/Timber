@@ -108,14 +108,14 @@ public class SongsFragment extends Fragment implements MusicStateListener {
         super.onActivityCreated(savedInstanceState);
         setHasOptionsMenu(true);
         //test
-        Helpers.showCursorInfo(SongLoader.makeSongCursor(getActivity(), null, null));
-        Helpers.showSongList(SongLoader.getAllSongs(getActivity()));
-        ((BaseActivity) getActivity()).sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
-                Uri.fromFile(new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/cursor.txt"))
-        ));
-        ((BaseActivity) getActivity()).sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
-                Uri.fromFile(new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/songs.txt"))
-        ));
+//        Helpers.showCursorInfo(SongLoader.makeSongCursor(getActivity(), null, null));
+//        Helpers.showSongList(SongLoader.getAllSongs(getActivity()));
+//        ((BaseActivity) getActivity()).sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
+//                Uri.fromFile(new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/cursor.txt"))
+//        ));
+//        ((BaseActivity) getActivity()).sendBroadcast(new Intent(Intent.ACTION_MEDIA_SCANNER_SCAN_FILE,
+//                Uri.fromFile(new File(Environment.getExternalStoragePublicDirectory(Environment.DIRECTORY_DOWNLOADS) + "/songs.txt"))
+//        ));
         //test
     }
 

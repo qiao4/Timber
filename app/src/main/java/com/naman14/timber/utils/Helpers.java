@@ -57,7 +57,7 @@ import java.util.regex.Pattern;
 import java.util.regex.PatternSyntaxException;
 
 public class Helpers {
-    static String tag = "encode";
+    public static String tag = "encode";
 
     public static void showAbout(AppCompatActivity activity) {
         FragmentManager fm = activity.getSupportFragmentManager();
