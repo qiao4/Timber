@@ -16,6 +16,7 @@ package com.naman14.timber.dataloaders;
 
 import android.content.ContentResolver;
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.database.Cursor;
 import android.net.Uri;
 import android.provider.BaseColumns;
@@ -36,11 +37,20 @@ import java.util.List;
 
 public class SongLoader {
 
+    public static final String PREFS_NAME = "songsFile";
+
     private static final long[] sEmptyList = new long[0];
 
     private static ArrayList<Song> allSongs = null;
 
-    public static ArrayList<Song> getSongsByID3ForCursor(Cursor cursor) {
+    public static ArrayList<Song> getSongsByID3ForCursor(Cursor cursor, Context context) {
+        SharedPreferences settings = context.getSharedPreferences(PREFS_NAME, 0);
+        String songsSer = settings.getString("songs", "");
+        Log.d(Helpers.tag, "sharedpreferences -- " + songsSer);
+        if(songsSer.length() > 0) {
+            return (ArrayList<Song>)(Helpers.getObjectFromString(songsSer, (new ArrayList<Song>()).getClass()));
+        }
+
         ArrayList arrayList = new ArrayList();
         if((cursor != null) && (cursor.moveToFirst())) {
             Mp3File mp3file = null;
@@ -81,6 +91,11 @@ public class SongLoader {
             }
             while(cursor.moveToNext());
         }
+
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putString("songs", Helpers.object2String(arrayList));
+        editor.commit();
+
         if(cursor != null)
             cursor.close();
         return arrayList;
@@ -178,7 +193,7 @@ public class SongLoader {
 
     public static ArrayList<Song> getAllSongs(Context context) {
         if(allSongs == null) {
-            allSongs = getSongsByID3ForCursor(makeSongCursor(context, null, null));
+            allSongs = getSongsByID3ForCursor(makeSongCursor(context, null, null), context);
         }
         return allSongs;
     }

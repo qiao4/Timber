@@ -32,6 +32,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AlertDialog;
 import android.support.v7.app.AppCompatActivity;
+import android.util.Base64;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -45,10 +46,16 @@ import com.naman14.timber.R;
 import com.naman14.timber.models.Song;
 import com.squareup.okhttp.internal.io.FileSystem;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
+import java.io.IOException;
+import java.io.ObjectInputStream;
+import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
+import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -285,6 +292,72 @@ public class Helpers {
             }
         }
         return str;
+    }
+
+    public static String object2String(Object obj)
+    {
+        String objBody = null;
+        ByteArrayOutputStream baops = null;
+        ObjectOutputStream oos = null;
+
+        try
+        {
+            baops = new ByteArrayOutputStream();
+            oos = new ObjectOutputStream(baops);
+            oos.writeObject(obj);
+            byte[] bytes = baops.toByteArray();
+            objBody = Base64.encodeToString(bytes, Base64.DEFAULT);
+        } catch (IOException e)
+        {
+            Log.e(tag, e.getMessage());
+        } finally
+        {
+            try
+            {
+                if (oos != null)
+                    oos.close();
+                if (baops != null)
+                    baops.close();
+            } catch (IOException e)
+            {
+                Log.e(tag, e.getMessage());
+            }
+        }
+        return objBody;
+    }
+
+    @SuppressWarnings("unchecked")
+    public static <T extends Serializable> T getObjectFromString
+            (String objBody, Class<T> clazz)
+
+    {
+        byte[] bytes = Base64.decode(objBody, Base64.DEFAULT);;
+        ObjectInputStream ois = null;
+        T obj = null;
+        try
+        {
+            ois = new ObjectInputStream(new ByteArrayInputStream(bytes));
+            obj = (T) ois.readObject();
+        } catch (IOException e)
+        {
+            Log.e(tag, e.getMessage());
+        } catch (ClassNotFoundException e)
+        {
+            Log.e(tag, e.getMessage());
+        } finally
+        {
+
+            try
+            {
+                if (ois != null)
+                    ois.close();
+            } catch (IOException e)
+            {
+                Log.e(tag, e.getMessage());
+            }
+        }
+
+        return obj;
     }
 
 }

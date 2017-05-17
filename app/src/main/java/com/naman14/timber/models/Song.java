@@ -16,7 +16,11 @@ package com.naman14.timber.models;
 
 import com.naman14.timber.utils.Helpers;
 
-public class Song {
+import java.io.Serializable;
+
+public class Song implements Serializable{
+
+    private static final long serialVersionUID = 136985741247L;
 
     public final long albumId;
     public final String albumName;

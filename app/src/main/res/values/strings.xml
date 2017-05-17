@@ -15,6 +15,7 @@
     <string name="accessibility_queue">Open queue</string>
     <string name="accessibility_browse">Browse music</string>
 
+    <string name="refresh_playlist">Refresh Playlist</string>
     <string name="menu_sort_by">Sort by</string>
     <string name="sort_order_entry_az">A-Z</string>
     <string name="sort_order_entry_za">Z-A</string>

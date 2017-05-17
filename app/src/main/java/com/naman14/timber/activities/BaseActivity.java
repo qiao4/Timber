@@ -86,14 +86,11 @@ public class BaseActivity extends ATEActivity implements ServiceConnection, Musi
         filter.addAction(MusicService.TRACK_ERROR);
 
         registerReceiver(mPlaybackStatus, filter);
-
     }
 
     @Override
     protected void onStop() {
         super.onStop();
-
-
     }
 
     @Override
@@ -108,7 +105,6 @@ public class BaseActivity extends ATEActivity implements ServiceConnection, Musi
 
         onMetaChanged();
     }
-
 
     @Override
     public void onServiceDisconnected(final ComponentName name) {
@@ -204,13 +200,15 @@ public class BaseActivity extends ATEActivity implements ServiceConnection, Musi
                         MusicPlayer.shuffleAll(BaseActivity.this);
                     }
                 }, 80);
-
                 return true;
             case R.id.action_search:
                 NavigationUtils.navigateToSearch(this);
                 return true;
             case R.id.action_equalizer:
                 NavigationUtils.navigateToEqualizer(this);
+                return true;
+            case R.id.refresh_playlist:
+                //TODO
                 return true;
 
         }

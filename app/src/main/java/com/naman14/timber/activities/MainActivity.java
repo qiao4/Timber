@@ -57,7 +57,6 @@ import java.util.Map;
 
 public class MainActivity extends BaseActivity implements ATEActivityThemeCustomizer {
 
-
     private static MainActivity sMainActivity;
     SlidingUpPanelLayout panelLayout;
     NavigationView navigationView;
@@ -73,7 +72,6 @@ public class MainActivity extends BaseActivity implements ATEActivityThemeCustom
             Fragment fragment = new MainFragment();
             FragmentTransaction transaction = getSupportFragmentManager().beginTransaction();
             transaction.replace(R.id.fragment_container, fragment).commitAllowingStateLoss();
-
         }
     };
     Runnable navigateNowPlaying = new Runnable() {

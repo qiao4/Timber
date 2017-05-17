@@ -79,7 +79,7 @@ public class SongsFragment extends Fragment implements MusicStateListener {
     }
 
     public void onPlaylistChanged() {
-
+        reloadAdapter();
     }
 
     public void onMetaChanged() {
@@ -170,7 +170,6 @@ public class SongsFragment extends Fragment implements MusicStateListener {
             recyclerView.setAdapter(mAdapter);
             if (getActivity() != null)
                 recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
-
         }
 
         @Override

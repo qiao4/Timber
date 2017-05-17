@@ -15,6 +15,7 @@
     <string name="accessibility_queue">开启队列</string>
     <string name="accessibility_browse">浏览音乐</string>
 
+    <string name="refresh_playlist">刷新歌曲列表</string>
     <string name="menu_sort_by">排序</string>
     <string name="sort_order_entry_az">A 到 Z</string>
     <string name="sort_order_entry_za">Z 到 A</string>
