@@ -20,7 +20,7 @@ import java.io.Serializable;
 
 public class Song implements Serializable{
 
-    private static final long serialVersionUID = 136985741247L;
+    private static final long serialVersionUID = 1L;
 
     public final long albumId;
     public final String albumName;
