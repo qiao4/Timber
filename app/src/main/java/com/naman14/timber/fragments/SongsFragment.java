@@ -20,16 +20,19 @@ import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Environment;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.AppCompatActivity;
 import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Toast;
 
 import com.naman14.timber.R;
 import com.naman14.timber.activities.BaseActivity;
@@ -51,6 +54,7 @@ public class SongsFragment extends Fragment implements MusicStateListener {
     private SongsListAdapter mAdapter;
     private RecyclerView recyclerView;
     private PreferencesUtility mPreferences;
+    Handler handler = new Handler();
 
     @Override
     public void onCreate(final Bundle savedInstanceState) {
@@ -79,11 +83,19 @@ public class SongsFragment extends Fragment implements MusicStateListener {
     }
 
     public void onPlaylistChanged() {
-        reloadAdapter();
+        Runnable a = () -> {
+            List<Song> songList = SongLoader.getAllSongs(getActivity());
+            handler.post(() -> {
+                mAdapter.updateDataSet(songList);
+                mAdapter.notifyDataSetChanged();
+                Toast.makeText(getActivity(), "refresh success", Toast.LENGTH_SHORT).show();
+            });
+        };
+        new Thread(a).start();
     }
 
     public void onMetaChanged() {
-        if (mAdapter != null)
+        if(mAdapter != null)
             mAdapter.notifyDataSetChanged();
     }
 
@@ -127,7 +139,7 @@ public class SongsFragment extends Fragment implements MusicStateListener {
 
     @Override
     public boolean onOptionsItemSelected(MenuItem item) {
-        switch (item.getItemId()) {
+        switch(item.getItemId()) {
             case R.id.menu_sort_by_az:
                 mPreferences.setSongSortOrder(SortOrder.SongSortOrder.SONG_A_Z);
                 reloadAdapter();
@@ -160,7 +172,7 @@ public class SongsFragment extends Fragment implements MusicStateListener {
 
         @Override
         protected String doInBackground(String... params) {
-            if (getActivity() != null)
+            if(getActivity() != null)
                 mAdapter = new SongsListAdapter((AppCompatActivity) getActivity(), SongLoader.getAllSongs(getActivity()), false, false);
             return "Executed";
         }
@@ -168,7 +180,7 @@ public class SongsFragment extends Fragment implements MusicStateListener {
         @Override
         protected void onPostExecute(String result) {
             recyclerView.setAdapter(mAdapter);
-            if (getActivity() != null)
+            if(getActivity() != null)
                 recyclerView.addItemDecoration(new DividerItemDecoration(getActivity(), DividerItemDecoration.VERTICAL_LIST));
         }
 

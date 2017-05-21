@@ -16,6 +16,7 @@ package com.naman14.timber.activities;
 
 import android.Manifest;
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.Bundle;
 import android.os.Handler;
 import android.preference.PreferenceManager;
@@ -26,6 +27,7 @@ import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v4.view.GravityCompat;
 import android.support.v4.widget.DrawerLayout;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuItem;
 import android.view.View;
@@ -36,6 +38,7 @@ import com.afollestad.appthemeengine.customizers.ATEActivityThemeCustomizer;
 import com.anjlab.android.iab.v3.BillingProcessor;
 import com.naman14.timber.MusicPlayer;
 import com.naman14.timber.R;
+import com.naman14.timber.dataloaders.SongLoader;
 import com.naman14.timber.fragments.AlbumDetailFragment;
 import com.naman14.timber.fragments.ArtistDetailFragment;
 import com.naman14.timber.fragments.FoldersFragment;
@@ -254,6 +257,18 @@ public class MainActivity extends BaseActivity implements ATEActivityThemeCustom
                 } else super.onBackPressed();
                 return true;
             }
+            case R.id.refresh_playlist:
+                SharedPreferences settings = getSharedPreferences(com.naman14.timber.dataloaders.SongLoader.PREFS_NAME, 0);
+                SharedPreferences.Editor editor = settings.edit();
+                editor.putString("songs", "");
+                editor.commit();
+                SongLoader.clearAllSongs();
+
+                Fragment currentFragment = getSupportFragmentManager().findFragmentById(R.id.fragment_container);
+                if(currentFragment instanceof MainFragment) {
+                    ((MainFragment)currentFragment).regetPlaylist();
+                }
+                break;
         }
         return super.onOptionsItemSelected(item);
     }
@@ -276,7 +291,6 @@ public class MainActivity extends BaseActivity implements ATEActivityThemeCustom
                     public boolean onNavigationItemSelected(final MenuItem menuItem) {
                         updatePosition(menuItem);
                         return true;
-
                     }
                 });
     }

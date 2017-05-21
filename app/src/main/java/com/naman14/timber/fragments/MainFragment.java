@@ -107,7 +107,13 @@ public class MainFragment extends Fragment {
         super.onResume();
         String ateKey = Helpers.getATEKey(getActivity());
         ATEUtils.setStatusBarColor(getActivity(), ateKey, Config.primaryColor(getActivity(), ateKey));
+    }
 
+    public void regetPlaylist() {
+        Fragment fragment = ((Adapter)viewPager.getAdapter()).getItem(viewPager.getCurrentItem());
+        if(fragment instanceof SongsFragment) {
+            ((SongsFragment)fragment).onPlaylistChanged();
+        }
     }
 
     @Override

@@ -207,10 +207,6 @@ public class BaseActivity extends ATEActivity implements ServiceConnection, Musi
             case R.id.action_equalizer:
                 NavigationUtils.navigateToEqualizer(this);
                 return true;
-            case R.id.refresh_playlist:
-                //TODO
-                return true;
-
         }
         return super.onOptionsItemSelected(item);
     }

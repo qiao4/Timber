@@ -46,7 +46,6 @@ public class SongLoader {
     public static ArrayList<Song> getSongsByID3ForCursor(Cursor cursor, Context context) {
         SharedPreferences settings = context.getSharedPreferences(PREFS_NAME, 0);
         String songsSer = settings.getString("songs", "");
-        Log.d(Helpers.tag, "sharedpreferences -- " + songsSer);
         if(songsSer.length() > 0) {
             return (ArrayList<Song>)(Helpers.getObjectFromString(songsSer, (new ArrayList<Song>()).getClass()));
         }
@@ -196,6 +195,10 @@ public class SongLoader {
             allSongs = getSongsByID3ForCursor(makeSongCursor(context, null, null), context);
         }
         return allSongs;
+    }
+
+    public static void clearAllSongs() {
+        allSongs = null;
     }
 
     public static long[] getSongListInFolder(Context context, String path) {
